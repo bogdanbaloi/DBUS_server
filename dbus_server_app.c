@@ -49,6 +49,8 @@ on_method_to_interface()
     g_signal_connect(skeletonNew, "handle-set-alarm-time", G_CALLBACK(on_set_alarm_time), NULL);
     g_signal_connect(skeletonNew, "handle-set-alarm-status", G_CALLBACK(on_set_alarm_status), NULL);
     g_signal_connect(skeletonNew, "handle-get-alarm-status", G_CALLBACK(on_get_alarm_status), NULL);
+
+    printf("On methid called and finished\n");
 }
 
 /* ---------------------------------------------------------------------------------------------------- */
@@ -58,26 +60,26 @@ on_bus_acquired (GDBusConnection *connection,
                  const gchar     *name,
                  gpointer         user_data)
 {
+    printf("Se apelkeaza on bus!!!\n");
     GDBusObjectManagerServer * registration_id;
     alarmClockObjectSkeleton * objectSkeleton;
-
-    GDBusObjectSkeleton * objectgDbusSkeleton;
-
 
     registration_id = g_dbus_object_manager_server_new("/com/time/service/manager");
     objectSkeleton = alarm_clock_object_skeleton_new("/com/time/service/manager/object");
     skeletonNew = alarm_clock_alarm_clock_skeleton_new();
 
+    printf("Skeleton interface created!!!\n");
+
     alarm_clock_object_skeleton_set_alarm_clock(objectSkeleton, skeletonNew);
 
-    g_dbus_object_manager_server_export(registration_id, objectgDbusSkeleton);
+    g_dbus_object_manager_server_export(registration_id, G_DBUS_OBJECT_SKELETON(objectSkeleton));
 
     g_dbus_object_manager_server_set_connection(registration_id, connection);
 
     on_method_to_interface();
 
-    g_object_unref (objectSkeleton);
-    g_object_unref (skeletonNew);
+    //g_object_unref (objectSkeleton);
+    //g_object_unref (skeletonNew);
 
     printf("Bus Acquired!!\n");
 
@@ -90,6 +92,7 @@ on_name_acquired (GDBusConnection *connection,
                   const gchar     *name,
                   gpointer         user_data)
 {
+    printf("Acquiring started!!");
     alarm_clock_alarm_clock_emit_ring_alarm(skeletonNew,"Ringing!!\n");
     printf("Name Acquired!!\n");
 }
@@ -107,7 +110,7 @@ on_name_lost (GDBusConnection *connection,
 /* ---------------------------------------------------------------------------------------------------- */
 
 int
-main (int argc, char *argv[])
+main (int argc, char ** argv)
 {
     guint owner_id;
     GMainLoop *loop;

@@ -1,5 +1,5 @@
 CC	=	gcc
-CFLAGS = `pkg-config --cflags --libs glib-2.0 gio-2.0` 
+CFLAGS = `pkg-config --cflags --libs glib-2.0 gtk+-2.0` 
 
 dbus_server_app:
 	${CC}	dbus_server_app.c	alarmClockStubs.c	${CFLAGS}	-o	dbus_server_app
